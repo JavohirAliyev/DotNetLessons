@@ -14,4 +14,19 @@ public static class StringExtensions
 
         return first.ToString().ToUpper() + rest.ToLower();
     }
+
+    public static string RemoveDoubleSpaces(this string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        while (value.Contains("  "))
+        {
+            value = value.Replace("  ", " ");
+        }
+
+        return value.Trim();
+    }
 }
