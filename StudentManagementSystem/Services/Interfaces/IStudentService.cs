@@ -4,7 +4,7 @@ namespace StudentManagementSystem.Services.Interfaces;
 
 public interface IStudentService
 {
-    Student CreateStudent(string firstName, string lastName, int id);
+    Student CreateStudent(string firstName, string lastName);
     Student GetStudentById(int Id);
     List<Student> GetAllStudents();
     Student MarkStudent(int id, string subject, double grade, List<Student> students);

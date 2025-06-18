@@ -6,8 +6,11 @@ namespace StudentManagementSystem.Services;
 
 public class StudentService : IStudentService
 {
-    public Student CreateStudent(string firstName, string lastName, int id)
+    private readonly string _filePath = "studentsList.json";
+    public Student CreateStudent(string firstName, string lastName)
     {
+        var students = GetAllStudents();
+        int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
             Id = id,
@@ -20,22 +23,32 @@ public class StudentService : IStudentService
             WriteIndented = true,
         };
 
-        string json = JsonSerializer.Serialize(student, options);
+        students.Add(student);
+        string json = JsonSerializer.Serialize(students, options);
 
-        File.WriteAllText("studentsList.json", json);
+        File.WriteAllText(_filePath, json);
 
         return student;
     }
 
     public List<Student> GetAllStudents()
     {
-        if (File.Exists("studentsList.json"))
+        if (File.Exists(_filePath))
         {
-            string jsonString = File.ReadAllText("studentsList.json");
-
-            var studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString)!;
-
-            return studentsList;
+            string jsonString = File.ReadAllText(_filePath);
+            if (string.IsNullOrWhiteSpace(jsonString))
+            {
+                return [];
+            }
+            try
+            {
+                List<Student> studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
+                return studentsList;
+            }
+            catch (JsonException)
+            {
+                return [];
+            }
         }
         return [];
     }
@@ -47,17 +60,22 @@ public class StudentService : IStudentService
 
     public Student MarkStudent(int id, string subject, double grade, List<Student> students)
     {
-        foreach (var student in students)
+        if (string.IsNullOrWhiteSpace(subject) || grade < 0 || grade > 100)
         {
-            if (student.Id == id)
-            {
-                student.Grades.Add(subject, grade);
-                return student;
-            }
+            throw new ArgumentException("Invalid subject or grade.");
         }
-        return null;
+
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+        {
+            throw new KeyNotFoundException($"Student with ID {id} not found.");
+        }
+
+        student.Grades[subject] = grade;
+        SaveStudentsList(students);
+        return student;
     }
-    
+
     public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
@@ -67,7 +85,7 @@ public class StudentService : IStudentService
 
         string json = JsonSerializer.Serialize(students, options);
 
-        File.WriteAllText("studentsList.json", json);
+        File.WriteAllText(_filePath, json);
     }
 
 }
