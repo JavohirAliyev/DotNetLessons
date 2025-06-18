@@ -1,7 +1,10 @@
-﻿using StudentManagementSystem.Services;
+﻿using System.Transactions;
+using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 using StudentManagementSystem.Utils;
 
 StudentService studentService = new();
+List<Student> listOfStudents = [];
 
 Console.WriteLine("WELCOME TO STUDENT MANAGEMENT SYSTEM!");
 
@@ -11,41 +14,53 @@ Console.WriteLine("3. Create a student");
 Console.WriteLine("4. Clear");
 Console.WriteLine("5. Exit");
 
-string input = Console.ReadLine() ?? "";
-string validInput = input.Trim().ToLower();
-
-switch (validInput)
+while (true)
 {
-    case "1":
-    case "students":
-        var students = studentService.GetAllStudents();
-        foreach (var student in students)
-        {
-            Console.WriteLine($"{student.Id}: {student.FirstName} {student.LastName}");
-        }
-        break;
+    Console.Write("Enter command : ");
 
-    case "2":
-    case "mark":
-        break;
+    string input = Console.ReadLine() ?? "";
+    string validInput = input.Trim().ToLower();
 
-    case "3":
-    case "create":
-        Console.Write("Input the first name: ");
-        string name = Console.ReadLine()?.Trim().Capitalize() ?? "";
-        Console.Write("Input the last name: ");
-        string surname = Console.ReadLine()?.Trim().Capitalize() ?? "";
+    switch (validInput)
+    {
+        case "1":
+        case "students":
+            studentService.GetAllStudents(listOfStudents);
+            break;
 
-        studentService.CreateStudent(name, surname);
-        break;
+        case "2":
+        case "mark":
+            Console.Write("Enter the Id of the student: ");
+            int id = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Enter the Subject: ");
+            string subject = Console.ReadLine()!.Trim().RemoveDoubleSpaces();
+            Console.Write("Enter the grade : ");
+            double grade = Convert.ToDouble(Console.ReadLine());
 
-    case "4":
-    case "clear":
-        break;
+            studentService.MarkStudent(id, subject, grade, listOfStudents);
+            break;
 
-    case "5":
-    case "exit":
-    case "quit":
-    case "kill":
-        break;
+        case "3":
+        case "create":
+            Console.Write("Input the first name: ");
+            string name = Console.ReadLine()?.Trim().Capitalize() ?? "";
+            Console.Write("Input the last name: ");
+            string surname = Console.ReadLine()?.Trim().Capitalize() ?? "";
+
+            studentService.CreateStudent(name, surname, listOfStudents);
+            break;
+
+        case "4":
+        case "clear":
+            Console.Clear();
+            Console.WriteLine("Console was cleared.");
+            break;
+
+        case "5":
+        case "exit":
+        case "quit":
+        case "kill":
+        Console.WriteLine("Good bye");
+            return;
+    }
 }
