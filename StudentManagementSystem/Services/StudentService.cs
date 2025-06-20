@@ -57,7 +57,7 @@ public class StudentService : IStudentService
         }
         return null;
     }
-    
+
     public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
@@ -69,5 +69,5 @@ public class StudentService : IStudentService
 
         File.WriteAllText("studentsList.json", json);
     }
-
+    
 }
