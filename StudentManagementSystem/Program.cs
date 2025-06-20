@@ -1,4 +1,5 @@
 ﻿// using System.Text.RegularExpressions;
+using StudentManagementSystem.Models;
 using StudentManagementSystem.Services;
 // using StudentManagementSystem.Utils;
 
@@ -111,7 +112,17 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Welcome to the Student Management System!");
 
-app.MapGet("/students", () => studentService.GetAllStudents());
+app.MapGet("/students", () =>
+{
+    try
+    {
+        return Results.Ok(studentService.GetAllStudents());
+    }
+    catch
+    {
+        return Results.NoContent();
+    }
+});
 
 app.MapGet("/students/{id}", (int id) =>
 {
@@ -122,6 +133,19 @@ app.MapGet("/students/{id}", (int id) =>
     catch (Exception ex)
     {
         return Results.NotFound(ex.Message);
+    }
+});
+
+app.MapPost("/students", (StudentDto student) =>
+{
+    try
+    {
+        var createdStudent = studentService.CreateStudent(student);
+        return Results.Created($"/students/{createdStudent.Id}", createdStudent);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
     }
 });
 

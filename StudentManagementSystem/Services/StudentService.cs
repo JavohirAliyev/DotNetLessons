@@ -7,15 +7,15 @@ namespace StudentManagementSystem.Services;
 public class StudentService : IStudentService
 {
     private readonly string _filePath = "studentsList.json";
-    public Student CreateStudent(string firstName, string lastName)
+    public Student CreateStudent(StudentDto studentDto)
     {
         var students = GetAllStudents();
         int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
             Id = id,
-            FirstName = firstName,
-            LastName = lastName
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName
         };
 
         var options = new JsonSerializerOptions
