@@ -7,15 +7,15 @@ namespace StudentManagementSystem.Services;
 public class StudentService : IStudentService
 {
     private readonly string _filePath = "studentsList.json";
-    public Student CreateStudent(string firstName, string lastName)
+    public Student CreateStudent(StudentDto studentDto)
     {
         var students = GetAllStudents();
         int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
             Id = id,
-            FirstName = firstName,
-            LastName = lastName
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName
         };
 
         var options = new JsonSerializerOptions
@@ -45,7 +45,7 @@ public class StudentService : IStudentService
                 List<Student> studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
                 return studentsList;
             }
-            catch (JsonException)
+            catch (Exception)
             {
                 return [];
             }
@@ -53,9 +53,13 @@ public class StudentService : IStudentService
         return [];
     }
 
-    public Student GetStudentById(int Id)
+    public Student GetStudentById(int id)
     {
-        throw new NotImplementedException();
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id)
+            ?? throw new KeyNotFoundException($"Student with the ID {id} not found");
+
+        return student;
     }
 
     public Student MarkStudent(int id, string subject, double grade, List<Student> students)

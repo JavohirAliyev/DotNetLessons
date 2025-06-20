@@ -12,5 +12,23 @@
     "FirstName": "Javohir",
     "LastName": "Aliyev",
     "Grades": {}
+  },
+  {
+    "Id": 3,
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Grades": {}
+  },
+  {
+    "Id": 4,
+    "FirstName": "Jane",
+    "LastName": "Smith",
+    "Grades": {}
+  },
+  {
+    "Id": 5,
+    "FirstName": "Malika",
+    "LastName": "Kadirova",
+    "Grades": {}
   }
 ]
