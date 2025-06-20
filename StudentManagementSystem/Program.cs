@@ -1,22 +1,20 @@
-﻿using System.Transactions;
-using StudentManagementSystem.Models;
+﻿﻿using System.Text.RegularExpressions;
 using StudentManagementSystem.Services;
 using StudentManagementSystem.Utils;
 
 StudentService studentService = new();
-List<Student> listOfStudents = [];
-
+var students = studentService.GetAllStudents();
 Console.WriteLine("WELCOME TO STUDENT MANAGEMENT SYSTEM!");
-
-Console.WriteLine("1. Students");
-Console.WriteLine("2. Mark a student");
-Console.WriteLine("3. Create a student");
-Console.WriteLine("4. Clear");
-Console.WriteLine("5. Exit");
 
 while (true)
 {
-    Console.Write("Enter command : ");
+    Console.WriteLine("1. Students");
+    Console.WriteLine("2. Mark a student");
+    Console.WriteLine("3. Create a student");
+    Console.WriteLine("4. Delete a student");
+    Console.WriteLine("5. Filter student by major/faculty");
+    Console.WriteLine("6. Clear");
+    Console.WriteLine("7. Exit");
 
     string input = Console.ReadLine() ?? "";
     string validInput = input.Trim().ToLower();
@@ -25,42 +23,95 @@ while (true)
     {
         case "1":
         case "students":
-            studentService.GetAllStudents(listOfStudents);
+            if (students.Count > 0)
+            {
+                foreach (var student in students)
+                {
+                    if (student.Grades.Count > 0)
+                    {
+                        Console.WriteLine($"{student.Id}: {student.FirstName} {student.LastName} - Grades: {string.Join(", ", student.Grades.Select(g => $"{g.Key}: {g.Value}"))}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{student.Id}: {student.FirstName} {student.LastName} - No grades recorded.");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("There are no students");
+            }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey(true);
             break;
 
         case "2":
         case "mark":
-            Console.Write("Enter the Id of the student: ");
-            int id = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter the Subject: ");
-            string subject = Console.ReadLine()!.Trim().RemoveDoubleSpaces();
-            Console.Write("Enter the grade : ");
-            double grade = Convert.ToDouble(Console.ReadLine());
-
-            studentService.MarkStudent(id, subject, grade, listOfStudents);
+            if (students.Count > 0)
+            {
+                Console.Write("Enter Id of the student: ");
+                var id = int.Parse(Console.ReadLine() ?? "");
+                Console.Write("Enter subject of the student: ");
+                var subject = Console.ReadLine()?.Trim().Capitalize().RemoveDoubleSpaces() ?? "";
+                Console.Write("Enter grade of the student: ");
+                var grade = double.Parse(Console.ReadLine() ?? "");
+                studentService.MarkStudent(id, subject, grade, students);
+            }
+            else
+            {
+                Console.WriteLine("There are no students to mark");
+            }
             break;
 
         case "3":
         case "create":
             Console.Write("Input the first name: ");
-            string name = Console.ReadLine()?.Trim().Capitalize() ?? "";
+            string firstName = Console.ReadLine()?.Trim().Capitalize() ?? "";
             Console.Write("Input the last name: ");
-            string surname = Console.ReadLine()?.Trim().Capitalize() ?? "";
+            string lastName = Console.ReadLine()?.Trim().Capitalize() ?? "";
 
-            studentService.CreateStudent(name, surname, listOfStudents);
+            if (MyRegex().IsMatch(firstName) && Regex.IsMatch(lastName, @"^[a-zA-Z]+$"))
+            {
+                students.Add(studentService.CreateStudent(firstName, lastName));
+                Console.WriteLine($"Student {firstName} {lastName} created successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid name or surname. Please use only letters.");
+            }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
             break;
 
         case "4":
-        case "clear":
-            Console.Clear();
-            Console.WriteLine("Console was cleared.");
+        case "delete":
+        case "deletion":
+            Console.Write("Enter the Id of the student : ");
+            int Id = Convert.ToInt32(Console.ReadLine());
+            studentService.DeleteStudent(Id);
             break;
 
-        case "5":
+        case "6":
+        case "clear":
+            Console.Clear();
+            break;
+
+        case "7":
         case "exit":
         case "quit":
         case "kill":
-        Console.WriteLine("Good bye");
+            Console.WriteLine("Exiting the program...");
             return;
+        default:
+            Console.WriteLine("Invalid input, please try again.");
+            break;
     }
+    studentService.SaveStudentsList(students);
+}
+partial class Program
+{
+    [GeneratedRegex(@"^[a-zA-Z]+$")]
+    private static partial Regex MyRegex();
 }

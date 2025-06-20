@@ -6,69 +6,117 @@ namespace StudentManagementSystem.Services;
 
 public class StudentService : IStudentService
 {
-    public Student CreateStudent(string firstName, string lastName, List<Student> listOfStudents)
+    private readonly string _filePath = "studentsList.json";
+    public Student CreateStudent(string firstName, string lastName)
     {
+        var students = GetAllStudents();
+        int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
+            Id = id,
             FirstName = firstName,
-            LastName = lastName,
-            Id = listOfStudents.Count == 0 ? 1 : listOfStudents.Last().Id + 1
+            LastName = lastName
         };
 
-        listOfStudents.Add(student);
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+        };
 
-        SaveHistory(listOfStudents);
+        students.Add(student);
+        string json = JsonSerializer.Serialize(students, options);
 
-        Console.WriteLine("The new student is succesfully created!");
+        File.WriteAllText(_filePath, json);
+
         return student;
     }
 
-    public void GetAllStudents(List<Student> listOfStudents)
+    public List<Student> GetAllStudents()
     {
-        if (listOfStudents.Count == 0)
+        if (File.Exists(_filePath))
         {
-            Console.WriteLine("There is no student in list");
-        }
-        else
-        {
-            foreach (var student in listOfStudents)
+            string jsonString = File.ReadAllText(_filePath);
+            if (string.IsNullOrWhiteSpace(jsonString))
             {
-                Console.WriteLine($"{student.Id}: {student.FirstName} {student.LastName}");
+                return [];
+            }
+            try
+            {
+                List<Student> studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
+                return studentsList;
+            }
+            catch (JsonException)
+            {
+                return [];
             }
         }
+        return [];
     }
 
     public Student GetStudentById(int Id)
     {
-        return null; 
+        throw new NotImplementedException();
     }
 
-    public Student MarkStudent(int id, string subject, double grade, List<Student> listOfStudents)
+    public Student MarkStudent(int id, string subject, double grade, List<Student> students)
     {
-        if (listOfStudents.Count == 0 || listOfStudents.Count < id)
+        if (string.IsNullOrWhiteSpace(subject) || grade < 0 || grade > 100)
         {
-            Console.WriteLine("There is no student with this Id");
-            return null;
+            throw new ArgumentException("Invalid subject or grade.");
+        }
+
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+        {
+            throw new KeyNotFoundException($"Student with ID {id} not found.");
+        }
+
+        student.Grades[subject] = grade;
+        SaveStudentsList(students);
+        return student;
+    }
+
+    public void DeleteStudent(int Id)
+    {
+        if (_filePath == null || !File.Exists(_filePath))
+        {
+            Console.WriteLine("There is no student.");
+            return;
+        }
+
+        string json = File.ReadAllText(_filePath);
+        List<Student>? students = JsonSerializer.Deserialize<List<Student>>(json);
+
+        if (students == null || students.Count == 0)
+        {
+            Console.WriteLine("No students found.");
+            return;
+        }
+
+        var student = students.FirstOrDefault(s => s.Id == Id);
+        if (student != null)
+        {
+            students.Remove(student);
+            Console.WriteLine($"{Id} removed");
+            SaveStudentsList(students);
         }
         else
         {
-            listOfStudents[id - 1].Grades.Add(subject, grade);
-            SaveHistory(listOfStudents);
-
-            Console.WriteLine($"You are succesfully mark the student");
-            return listOfStudents[id - 1];
+            Console.WriteLine("There is no student with this Id");
         }
     }
 
-     public void SaveHistory(List<Student> listOfStudents)
+
+    public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
         {
-            WriteIndented = true
+            WriteIndented = true,
         };
 
-        string json = JsonSerializer.Serialize(listOfStudents, options);
+        string json = JsonSerializer.Serialize(students, options);
 
-        File.WriteAllText("listOfStudents.json", json);
+        File.WriteAllText(_filePath, json);
     }
+
 }
