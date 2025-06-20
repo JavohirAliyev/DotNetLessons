@@ -55,7 +55,11 @@ public class StudentService : IStudentService
 
     public Student GetStudentById(int Id)
     {
-        throw new NotImplementedException();
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == Id)
+            ?? throw new KeyNotFoundException($"Student with ID {Id} not found.");
+
+        return student;
     }
 
     public Student MarkStudent(int id, string subject, double grade, List<Student> students)
