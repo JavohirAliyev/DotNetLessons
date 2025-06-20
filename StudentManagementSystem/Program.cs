@@ -128,7 +128,14 @@ app.MapGet("/students/{id}", (string id) =>
 
 app.MapPost("/students", (StudentDto studentDto) =>
 {
-    return studentService.CreateStudent(studentDto);
+    try
+    {
+        return Results.Created(new Uri($"/students/{studentDto.Id}"), studentService.CreateStudent(studentDto));
+    }
+    catch (Exception ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
 });
 
 app.Run();
