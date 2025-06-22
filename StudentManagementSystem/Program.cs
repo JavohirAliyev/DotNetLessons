@@ -114,39 +114,42 @@ app.MapGet("/", () => "Welcome to the Student Management System!");
 
 app.MapGet("/students", () =>
 {
-    try
-    {
-        return Results.Ok(studentService.GetAllStudents());
-    }
-    catch
-    {
-        return Results.NoContent();
-    }
+    var students = studentService.GetAllStudents();
+    return students == null || students.Count == 0
+        ? Results.NoContent()
+        : Results.Ok(students);
 });
 
 app.MapGet("/students/{id}", (int id) =>
 {
-    try
-    {
-        return Results.Ok(studentService.GetStudentById(id));
-    }
-    catch (Exception ex)
-    {
-        return Results.NotFound(ex.Message);
-    }
+    var student = studentService.GetStudentById(id);
+    return student == null
+        ? Results.NotFound("Student not found")
+        : Results.Ok(student);
 });
 
 app.MapPost("/students", (StudentDto student) =>
 {
-    try
-    {
-        var createdStudent = studentService.CreateStudent(student);
-        return Results.Created($"/students/{createdStudent.Id}", createdStudent);
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(ex.Message);
-    }
+    if (student == null)
+        return Results.BadRequest("Student data is required.");
+    var created = studentService.CreateStudent(student);
+    return Results.Created($"/students/{created.Id}", created);
+});
+
+app.MapPut("/students/{id}", (int id, StudentDto student) =>
+{
+    var updated = studentService.UpdateStudent(id, student);
+    return updated == null
+        ? Results.NotFound("Student not found")
+        : Results.Ok(updated);
+});
+
+app.MapDelete("/students/{id}", (int id) =>
+{
+    var deleted = studentService.DeleteStudent(id);
+    return deleted
+        ? Results.Ok("Student deleted")
+        : Results.NotFound("Student not found");
 });
 
 app.Run();
