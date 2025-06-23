@@ -23,4 +23,19 @@ class StudentsController : Controller
             return Results.BadRequest(ex.Message);
         }
     }
+
+    public IResult UpdateStudent(int id, StudentDto student)
+    {
+        try
+        {
+            var updated = studentService.UpdateStudent(id);
+            return updated == null
+                ? Results.NotFound("Student not found")
+                : Results.Ok(updated);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
 }

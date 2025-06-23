@@ -36,13 +36,13 @@ app.MapPost("/students", (StudentDto student) =>
 });
 
 // team 3
-app.MapPut("/students/{id}", (int id, StudentDto student) =>
-{
-    var updated = studentService.UpdateStudent(id, student);
-    return updated == null
-        ? Results.NotFound("Student not found")
-        : Results.Ok(updated);
-});
+// app.MapPut("/students/{id}", (int id, StudentDto student) =>
+// {
+//     var updated = studentService.UpdateStudent(id, student);
+//     return updated == null
+//         ? Results.NotFound("Student not found")
+//         : Results.Ok(updated);
+// });
 
 
 // team 4
