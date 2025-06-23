@@ -18,6 +18,14 @@ app.MapGet("/students", () =>
         : Results.Ok(students);
 });
 
+// app.MapGet("/students/{id}", (int id) =>
+// {
+//     var student = studentService.GetStudentById(id);
+//     return student == null
+//         ? Results.NotFound("Student not found")
+//         : Results.Ok(student);
+// });
+
 // team 2
 app.MapPost("/students", (StudentDto student) =>
 {

@@ -6,56 +6,72 @@ namespace StudentManagementSystem.Services;
 
 public class StudentService : IStudentService
 {
-    public Student CreateStudent(string firstName, string lastName, int id)
+    private readonly string _filePath = "studentsList.json";
+
+    public Student CreateStudent(StudentDto studentDto)
     {
+        var students = GetAllStudents();
+        int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
             Id = id,
-            FirstName = firstName,
-            LastName = lastName
+            FirstName = studentDto.FirstName,
+            LastName = studentDto.LastName
         };
 
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-        };
-
-        string json = JsonSerializer.Serialize(student, options);
-
-        File.WriteAllText("studentsList.json", json);
-
+        students.Add(student);
+        SaveStudentsList(students);
         return student;
     }
 
     public List<Student> GetAllStudents()
     {
-        if (File.Exists("studentsList.json"))
+        if (File.Exists(_filePath))
         {
-            string jsonString = File.ReadAllText("studentsList.json");
-
-            var studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString)!;
-
-            return studentsList;
+            string jsonString = File.ReadAllText(_filePath);
+            if (string.IsNullOrWhiteSpace(jsonString))
+                return [];
+            try
+            {
+                return JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
+            }
+            catch
+            {
+                return [];
+            }
         }
         return [];
     }
 
-    public Student GetStudentById(int Id)
+    public Student? GetStudentById(int id)
     {
-        throw new NotImplementedException();
+        var students = GetAllStudents();
+        return students.FirstOrDefault(s => s.Id == id);
     }
 
-    public Student MarkStudent(int id, string subject, double grade, List<Student> students)
+    public Student? UpdateStudent(int id, StudentDto studentDto)
     {
-        foreach (var student in students)
-        {
-            if (student.Id == id)
-            {
-                student.Grades.Add(subject, grade);
-                return student;
-            }
-        }
-        return null;
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+            return null;
+
+        student.FirstName = studentDto.FirstName;
+        student.LastName = studentDto.LastName;
+        SaveStudentsList(students);
+        return student;
+    }
+
+    public bool DeleteStudent(int id)
+    {
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+            return false;
+
+        students.Remove(student);
+        SaveStudentsList(students);
+        return true;
     }
 
     public void SaveStudentsList(List<Student> students)
@@ -64,10 +80,7 @@ public class StudentService : IStudentService
         {
             WriteIndented = true,
         };
-
         string json = JsonSerializer.Serialize(students, options);
-
-        File.WriteAllText("studentsList.json", json);
+        File.WriteAllText(_filePath, json);
     }
-    
 }
