@@ -83,4 +83,28 @@ public class StudentService : IStudentService
         string json = JsonSerializer.Serialize(students, options);
         File.WriteAllText(_filePath, json);
     }
+        public bool MarkStudent(int studentId, string subject, double grade)
+    {
+        var student = GetStudentById(studentId);
+        if (student == null)
+            return false;
+
+        student.Grades[subject] = grade;
+        var students = GetAllStudents();
+        var index = students.FindIndex(s => s.Id == studentId);
+        if (index != -1)
+        {
+            students[index] = student;
+            SaveStudentsList(students);
+            return true;
+        }
+        return false;
+    }
+
+    public Dictionary<string, double>? GetGrades(int studentId)
+    {
+        var student = GetStudentById(studentId);
+        return student?.Grades;
+    }
+
 }
