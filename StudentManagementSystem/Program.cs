@@ -1,9 +1,10 @@
-﻿using StudentManagementSystem.Models;
+﻿using System.Text.RegularExpressions;
+using StudentManagementSystem.Models;
 using StudentManagementSystem.Services;
 
 StudentService studentService = new();
 
-// var students = StudentService.GetAllStudents();
+var students = StudentService.GetAllStudents();
 // Console.WriteLine("WELCOME TO STUDENT MANAGEMENT SYSTEM!");
 
 // while (true)
@@ -69,7 +70,7 @@ StudentService studentService = new();
 //             Console.Write("Input the last name: ");
 //             string lastName = Console.ReadLine()?.Trim().Capitalize() ?? "";
 
-//             if (MyRegex().IsMatch(firstName) && Regex.IsMatch(lastName, @"^[a-zA-Z]+$"))
+            if (MyRegex().IsMatch(firstName) && Regex.IsMatch(lastName, @"^[a-zA-Z]+$"))
 //             {
 //                 students.Add(studentService.CreateStudent(firstName, lastName));
 //                 Console.WriteLine($"Student {firstName} {lastName} created successfully.");
@@ -99,7 +100,7 @@ StudentService studentService = new();
 //             break;
 //     }
 //     studentService.SaveStudentsList(students);
-// }
+// // }
 // partial class Program
 // {
 //     [GeneratedRegex(@"^[a-zA-Z]+$")]
@@ -128,7 +129,52 @@ app.MapGet("/students/{id}", (string id) =>
 
 app.MapPost("/students", (StudentDto studentDto) =>
 {
-    return studentService.CreateStudent(studentDto);
+    try
+    {
+        var result = studentService.CreateStudent(studentDto);
+        return Results.Created($"/students/{result.Id}", result);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPatch("/students/{id}/mark", (int id, string subject, double grade) =>
+{
+    try
+    {
+        var result = studentService.MarkStudent(id, subject, grade);
+        if (result != null)
+        {
+            return Results.Ok(result);
+        }
+        else
+        {
+            return Results.NotFound($"Student with ID {id} not found.");
+        }
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut("/students", (List<Student> students) =>
+{
+    try
+    {
+        studentService.SaveStudentsList(students);
+        return Results.Ok("Students list saved successfully.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }    
 });
 
 app.Run();
