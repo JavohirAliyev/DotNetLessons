@@ -26,14 +26,7 @@ app.MapGet("/students", () =>
 //         : Results.Ok(student);
 // });
 
-// team 2
-app.MapPost("/students", (StudentDto student) =>
-{
-    if (student == null)
-        return Results.BadRequest("Student data is required.");
-    var created = studentService.CreateStudent(student);
-    return Results.Created($"/students/{created.Id}", created);
-});
+
 
 // team 3
 app.MapPut("/students/{id}", (int id, StudentDto student) =>
