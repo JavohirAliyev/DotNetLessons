@@ -23,4 +23,23 @@ class StudentsController : Controller
             return Results.BadRequest(ex.Message);
         }
     }
+    [HttpDelete("{id}")]
+    public Task DeleteStudent(int id)
+    {
+        try
+        {
+            var students = GetAllStudents();
+            var student = students.FirstOrDefault(s => s.Id == id);
+            if (student == null)
+                return false;
+
+            students.Remove(student);
+            SaveStudentsList(students);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
 }
