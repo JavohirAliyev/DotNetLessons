@@ -7,6 +7,7 @@ namespace StudentManagementSystem.Services;
 public class StudentService : IStudentService
 {
     private readonly string _filePath = "studentsList.json";
+
     public Student CreateStudent(StudentDto studentDto)
     {
         var students = GetAllStudents();
@@ -18,16 +19,8 @@ public class StudentService : IStudentService
             LastName = studentDto.LastName
         };
 
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-        };
-
         students.Add(student);
-        string json = JsonSerializer.Serialize(students, options);
-
-        File.WriteAllText(_filePath, json);
-
+        SaveStudentsList(students);
         return student;
     }
 
@@ -37,15 +30,12 @@ public class StudentService : IStudentService
         {
             string jsonString = File.ReadAllText(_filePath);
             if (string.IsNullOrWhiteSpace(jsonString))
-            {
                 return [];
-            }
             try
             {
-                List<Student> studentsList = JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
-                return studentsList;
+                return JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
             }
-            catch (JsonException)
+            catch
             {
                 return [];
             }
@@ -53,31 +43,35 @@ public class StudentService : IStudentService
         return [];
     }
 
-    public Student GetStudentById(int Id)
+    public Student? GetStudentById(int id)
     {
         var students = GetAllStudents();
-        var student = students.FirstOrDefault(s => s.Id == Id)
-            ?? throw new KeyNotFoundException($"Student with ID {Id} not found.");
+        return students.FirstOrDefault(s => s.Id == id);
+    }
 
+    public Student? UpdateStudent(int id, StudentDto studentDto)
+    {
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+            return null;
+
+        student.FirstName = studentDto.FirstName;
+        student.LastName = studentDto.LastName;
+        SaveStudentsList(students);
         return student;
     }
 
-    public Student MarkStudent(int id, string subject, double grade, List<Student> students)
+    public bool DeleteStudent(int id)
     {
-        if (string.IsNullOrWhiteSpace(subject) || grade < 0 || grade > 100)
-        {
-            throw new ArgumentException("Invalid subject or grade.");
-        }
-
+        var students = GetAllStudents();
         var student = students.FirstOrDefault(s => s.Id == id);
         if (student == null)
-        {
-            throw new KeyNotFoundException($"Student with ID {id} not found.");
-        }
+            return false;
 
-        student.Grades[subject] = grade;
+        students.Remove(student);
         SaveStudentsList(students);
-        return student;
+        return true;
     }
 
     public void SaveStudentsList(List<Student> students)
@@ -86,10 +80,7 @@ public class StudentService : IStudentService
         {
             WriteIndented = true,
         };
-
         string json = JsonSerializer.Serialize(students, options);
-
         File.WriteAllText(_filePath, json);
     }
-
 }
