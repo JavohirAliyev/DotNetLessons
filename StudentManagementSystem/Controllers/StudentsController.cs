@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using StudentManagementSystem.Models;
 using StudentManagementSystem.Services;
 
 namespace StudentManagementSystem.Controllers;
 
+[ApiController]
 [Route("api/[controller]")]
-class StudentsController : Controller
+public class StudentsController : ControllerBase
 {
     readonly StudentService studentService = new();
 
@@ -17,6 +19,20 @@ class StudentsController : Controller
             return student == null
                 ? Results.NotFound("Student not found")
                 : Results.Ok(student);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost]
+    public IResult CreateStudent(StudentDto studentDto)
+    {
+        try
+        {
+            var createdStudent = studentService.CreateStudent(studentDto);
+            return Results.Created($"/students/{createdStudent.Id}", createdStudent);
         }
         catch (Exception ex)
         {
