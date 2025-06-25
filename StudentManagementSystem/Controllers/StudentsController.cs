@@ -24,22 +24,19 @@ class StudentsController : Controller
         }
     }
     [HttpDelete("{id}")]
-    public Task DeleteStudent(int id)
+    public IActionResult DeleteStudent(int id)
     {
         try
         {
-            var students = GetAllStudents();
-            var student = students.FirstOrDefault(s => s.Id == id);
-            if (student == null)
-                return false;
+            var deleted = studentService.DeleteStudent(id);
 
-            students.Remove(student);
-            SaveStudentsList(students);
-            return true;
+            return deleted
+                ? Ok("Student deleted")
+                : NotFound("Student not found");
         }
         catch (Exception ex)
         {
-            return Results.BadRequest(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 }
