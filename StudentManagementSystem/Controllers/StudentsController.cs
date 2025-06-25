@@ -55,14 +55,15 @@ public class StudentsController : ControllerBase
             return Results.BadRequest(ex.Message);
         }
     }
+
     [HttpDelete("{id}")]
     public IActionResult DeleteStudent(int id)
     {
         try
         {
-            var deleted = studentService.DeleteStudent(id);
+            var isDeleted = studentService.DeleteStudent(id);
 
-            return deleted
+            return isDeleted
                 ? Ok("Student deleted")
                 : NotFound("Student not found");
         }

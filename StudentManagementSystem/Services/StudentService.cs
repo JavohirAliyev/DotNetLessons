@@ -61,15 +61,16 @@ public class StudentService : IStudentService
         SaveStudentsList(students);
         return student;
     }
+
     public bool DeleteStudent(int id)
     {
-        var students = GetAllStudents();
-        var student = students.FirstOrDefault(s => s.Id == id);
+        var student = GetStudentById(id);
         if (student == null)
             return false;
 
         return RemoveStudent(student);
     }
+    
     public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
@@ -79,11 +80,12 @@ public class StudentService : IStudentService
         string json = JsonSerializer.Serialize(students, options);
         File.WriteAllText(_filePath, json);
     }
+
     public bool RemoveStudent(Student student)
     {
         var students = GetAllStudents();
-        bool removed = students.Remove(student);
-        if (!removed)
+        bool isRemoved = students.Remove(student);
+        if (!isRemoved)
             return false;
 
         SaveStudentsList(students);
