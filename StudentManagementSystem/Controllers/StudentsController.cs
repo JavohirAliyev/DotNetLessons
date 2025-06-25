@@ -56,7 +56,7 @@ public class StudentsController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("/{id}")]
     public IActionResult DeleteStudent(int id)
     {
         try

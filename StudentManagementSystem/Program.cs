@@ -37,15 +37,6 @@ app.MapPost("/students", (StudentDto student) =>
     return Results.Created($"/students/{created.Id}", created);
 });
 
-// team 4
-app.MapDelete("/students/{id}", (int id) =>
-{
-    var deleted = studentService.DeleteStudent(id);
-    return deleted
-        ? Results.Ok("Student deleted")
-        : Results.NotFound("Student not found");
-});
-
 app.UseHttpsRedirection();
 app.MapControllers();
 
