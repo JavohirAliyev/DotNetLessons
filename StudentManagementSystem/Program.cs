@@ -5,9 +5,11 @@ StudentService studentService = new();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+
 var app = builder.Build();
 
 app.MapGet("/", () => "Welcome to the Student Management System!");
+
 
 // team 1
 app.MapGet("/students", () =>
@@ -18,15 +20,22 @@ app.MapGet("/students", () =>
         : Results.Ok(students);
 });
 
-// team 3
-app.MapPut("/students/{id}", (int id, StudentDto student) =>
-{
-    var updated = studentService.UpdateStudent(id, student);
-    return updated == null
-        ? Results.NotFound("Student not found")
-        : Results.Ok(updated);
-});
+// app.MapGet("/students/{id}", (int id) =>
+// {
+//     var student = studentService.GetStudentById(id);
+//     return student == null
+//         ? Results.NotFound("Student not found")
+//         : Results.Ok(student);
+// });
 
+// team 2
+app.MapPost("/students", (StudentDto student) =>
+{
+    if (student == null)
+        return Results.BadRequest("Student data is required.");
+    var created = studentService.CreateStudent(student);
+    return Results.Created($"/students/{created.Id}", created);
+});
 
 // team 4
 app.MapDelete("/students/{id}", (int id) =>
@@ -39,4 +48,5 @@ app.MapDelete("/students/{id}", (int id) =>
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
 app.Run();
