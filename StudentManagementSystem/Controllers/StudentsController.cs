@@ -26,11 +26,12 @@ public class StudentsController : ControllerBase
         }
     }
 
-    public IResult UpdateStudent(int id, StudentDto student)
+    [HttpPut("/{id}")]
+    public IResult UpdateStudent(int id, StudentDto studentDto)
     {
         try
         {
-            var updated = studentService.UpdateStudent(id);
+            var updated = studentService.UpdateStudent(id, studentDto);
             return updated == null
                 ? Results.NotFound("Student not found")
                 : Results.Ok(updated);
