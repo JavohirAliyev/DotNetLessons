@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Models;
-using StudentManagementSystem.Services;
+using StudentManagementSystem.Services.Interfaces;
 
 namespace StudentManagementSystem.Controllers;
 
@@ -8,14 +8,19 @@ namespace StudentManagementSystem.Controllers;
 [Route("api/[controller]")]
 public class StudentsController : ControllerBase
 {
-    readonly StudentService studentService = new();
+    public StudentsController(IStudentService studentService)
+    {
+        _studentService = studentService;
+    }
+
+    private readonly IStudentService _studentService;
 
     [HttpGet("{id}")]
     public IResult GetStudentById(int id)
     {
         try
         {
-            var student = studentService.GetStudentById(id);
+            var student = _studentService.GetStudentById(id);
             return student == null
                 ? Results.NotFound("Student not found")
                 : Results.Ok(student);
@@ -31,7 +36,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var updated = studentService.UpdateStudent(id, studentDto);
+            var updated = _studentService.UpdateStudent(id, studentDto);
             return updated == null
                 ? Results.NotFound("Student not found")
                 : Results.Ok(updated);
@@ -47,7 +52,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var createdStudent = studentService.CreateStudent(studentDto);
+            var createdStudent = _studentService.CreateStudent(studentDto);
             return Results.Created($"/students/{createdStudent.Id}", createdStudent);
         }
         catch (Exception ex)

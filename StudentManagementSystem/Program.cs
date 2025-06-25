@@ -1,10 +1,13 @@
 ﻿using StudentManagementSystem.Models;
 using StudentManagementSystem.Services;
+using StudentManagementSystem.Services.Interfaces;
 
 StudentService studentService = new();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 var app = builder.Build();
 
