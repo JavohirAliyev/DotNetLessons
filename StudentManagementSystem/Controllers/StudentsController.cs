@@ -55,4 +55,31 @@ public class StudentsController : ControllerBase
             return Results.BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("search")]
+    public IResult SearchByName(string name)
+    {
+        try
+        {
+            var students = studentService.GetAllStudents();
+
+            if (string.IsNullOrWhiteSpace(name))
+                return Results.BadRequest("Search term is required.");
+
+            var results = students
+            .Where(s =>
+                s.FirstName.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+                s.LastName.Contains(name, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (results == null || results.Count == 0)
+            return Results.NotFound("Student not found");
+
+        return Results.Ok(results);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
+    }
 }
