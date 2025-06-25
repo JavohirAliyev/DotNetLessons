@@ -1,0 +1,4 @@
+[team 1] - fix the problem with delete student
+[team 2] - implement markStudent functionality
+[team 3] - add search functionality to find students by name
+[team 1] - implement pagination for the list of students
