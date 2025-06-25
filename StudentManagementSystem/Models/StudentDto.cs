@@ -10,4 +10,7 @@ public class MarkDto
 {
     public string? Subject { get; set; }
     public double Grade { get; set; }
+    public int Id { get; set; }
+    public int Value { get; set; }
 }
+

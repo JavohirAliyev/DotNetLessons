@@ -16,53 +16,17 @@ app.MapGet("/", () => "Welcome to the Student Management System!");
         : Results.Ok(students);
 });*/
 
-app.MapGet("/students/{id}", (int id) =>
+/*app.MapGet("/students/{id}", (int id) =>
 {
     var student = studentService.GetStudentById(id);
     return student == null
         ? Results.NotFound("Student not found")
         : Results.Ok(student);
-});
+});*/
 
-app.MapPost("/students", (StudentDto student) =>
-{
-    if (student == null)
-        return Results.BadRequest("Student data is required.");
-    var created = studentService.CreateStudent(student);
-    return Results.Created($"/students/{created.Id}", created);
-});
 
-app.MapPut("/students/{id}", (int id, StudentDto student) =>
-{
-    var updated = studentService.UpdateStudent(id, student);
-    return updated == null
-        ? Results.NotFound("Student not found")
-        : Results.Ok(updated);
-});
 
-app.MapDelete("/students/{id}", (int id) =>
-{
-    var deleted = studentService.DeleteStudent(id);
-    return deleted
-        ? Results.Ok("Student deleted")
-        : Results.NotFound("Student not found");
-});
-app.MapGet("/students/{id}", (int id) =>
-{
-    try
-    {
-        var student = studentService.GetStudentById(id);
-        if (student == null)
-            return Results.NotFound($"Student with id {id} not found.");
-        return Results.Ok(student);
-    }
-    catch
-    {
-        return Results.Problem("Unexpected error while getting student by id.");
-    }
-});
-
-app.MapPost("/students", (StudentDto student) =>
+/*app.MapPost("/students", (StudentDto student) =>
 {
     try
     {
@@ -75,10 +39,9 @@ app.MapPost("/students", (StudentDto student) =>
     {
         return Results.Problem("Unexpected error while creating student.");
     }
-});
+}); */
 
-// Обновление данных студента
-app.MapPut("/students/{id}", (int id, StudentDto student) =>
+/*app.MapPut("/students/{id}", (int id, StudentDto student) =>
 {
     try
     {
@@ -91,23 +54,22 @@ app.MapPut("/students/{id}", (int id, StudentDto student) =>
     {
         return Results.Problem("Unexpected error while updating student.");
     }
-});
+});*/
 
-// Удаление студента
-app.MapDelete("/students/{id}", (int id) =>
+/*app.MapDelete("/students/{id}", (int id) =>
 {
     try
     {
         var deleted = studentService.DeleteStudent(id);
         if (!deleted)
-            return Results.NotFound($"Student with id {id} not found.");
+        return Results.NotFound($"Student with id {id} not found.");
         return Results.Ok($"Student with id {id} deleted.");
     }
     catch
     {
         return Results.Problem("Unexpected error while deleting student.");
     }
-});
+});*/
 
 app.MapPost("/students/{id}/mark", (int id, MarkDto mark) =>
 {
