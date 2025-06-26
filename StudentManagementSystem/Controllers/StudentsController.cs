@@ -60,4 +60,18 @@ public class StudentsController : ControllerBase
             return Results.BadRequest(ex.Message);
         }
     }
+
+    [HttpPut("/{id}/")]
+    public IActionResult MarkStudent(int id, string subject, double grade)
+    {
+        try
+        {
+            var student = _studentService.MarkStudent(id, subject, grade);
+            return Ok(student);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

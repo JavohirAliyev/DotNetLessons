@@ -1,26 +1,18 @@
 [
   {
-    "Id": 1,
-    "FirstName": "John",
-    "LastName": "Doe",
-    "Grades": {}
-  },
-  {
-    "Id": 2,
-    "FirstName": "Jane",
-    "LastName": "Smith",
-    "Grades": {}
-  },
-  {
     "Id": 3,
     "FirstName": "John",
     "LastName": "Doe",
-    "Grades": {}
+    "Grades": {
+      "Math": 91.5
+    }
   },
   {
     "Id": 4,
     "FirstName": "Sunnat",
     "LastName": "Kayumov",
-    "Grades": {}
+    "Grades": {
+      "Math": 99
+    }
   }
 ]

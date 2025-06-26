@@ -49,6 +49,22 @@ app.MapDelete("/students/{id}", (int id) =>
         : Results.NotFound("Student not found");
 });
 
+// Example PUT request to test in Postman:
+// URL: http://localhost:5000/students/1?subject=Math&grade=91.5
+app.MapPut("/students/{id}", (int id, string subject, double grade) =>
+{
+    try
+    {
+        var student = studentService.MarkStudent(id, subject, grade);
+        return Results.Ok(student);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+
 app.UseHttpsRedirection();
 app.MapControllers();
 
