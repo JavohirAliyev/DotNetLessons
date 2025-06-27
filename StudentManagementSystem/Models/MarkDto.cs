@@ -1,4 +1,5 @@
 namespace StudentManagementSystem.Models;
+
 public class MarkDto
 {
     public int Id { get; set; }
