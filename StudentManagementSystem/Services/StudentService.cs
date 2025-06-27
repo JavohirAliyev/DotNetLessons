@@ -1,6 +1,7 @@
 using System.Text.Json;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.Services.Interfaces;
+using StudentManagementSystem.Utils;
 
 namespace StudentManagementSystem.Services;
 
@@ -43,6 +44,23 @@ public class StudentService : IStudentService
         return [];
     }
 
+    public List<Student> FilterStudents(string? searchTerm)
+    {
+        var students = GetAllStudents();
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return students;
+        }
+
+        var validSearchTerm = searchTerm.RemoveDoubleSpaces();
+
+        var result = students
+            .Where(s => s.FirstName.Contains(validSearchTerm, StringComparison.OrdinalIgnoreCase)
+            || s.LastName.Contains(validSearchTerm, StringComparison.OrdinalIgnoreCase));
+
+        return result.ToList();
+    }
+
     public Student? GetStudentById(int id)
     {
         var students = GetAllStudents();
@@ -74,18 +92,19 @@ public class StudentService : IStudentService
         return true;
     }
 
-    public Student MarkStudent(int id, string subject, double grade)
+    public Student? MarkStudent(int id, string subject, double grade)
     {
-        if (string.IsNullOrWhiteSpace(subject) || grade < 0 || grade > 100)
+        if (string.IsNullOrWhiteSpace(subject.Trim()) || grade < 0 || grade > 100)
+        {
             throw new Exception("Invalid subject or grade.");
+        }
 
         var students = GetAllStudents();
         var student = students.FirstOrDefault(s => s.Id == id);
         if (student == null)
-            throw new KeyNotFoundException($"Student with ID {id} not found.");
-
-        if (student.Grades == null)
-            student.Grades = new Dictionary<string, double>();
+        {
+            return null;
+        }
 
         student.Grades[subject] = grade;
         SaveStudentsList(students);

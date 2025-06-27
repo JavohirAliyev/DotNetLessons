@@ -15,59 +15,87 @@ public class StudentsController : ControllerBase
 
     private readonly IStudentService _studentService;
 
+    [HttpGet]
+    public IActionResult GetAllStudents([FromQuery] string? searchTerm)
+    {
+        try
+        {
+            var students = _studentService.FilterStudents(searchTerm!);
+            return Ok(students);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet("{id}")]
-    public IResult GetStudentById(int id)
+    public IActionResult GetStudentById(int id)
     {
         try
         {
             var student = _studentService.GetStudentById(id);
             return student == null
-                ? Results.NotFound("Student not found")
-                : Results.Ok(student);
+                ? NotFound("Student not found")
+                : Ok(student);
         }
         catch (Exception ex)
         {
-            return Results.BadRequest(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
-    [HttpPut("/{id}")]
-    public IResult UpdateStudent(int id, StudentDto studentDto)
+    [HttpPost]
+    public IActionResult CreateStudent(StudentDto studentDto)
+    {
+        try
+        {
+            var createdStudent = _studentService.CreateStudent(studentDto);
+            return Created($"/students/{createdStudent.Id}", createdStudent);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("{id}")]
+    public IActionResult UpdateStudent(int id, StudentDto studentDto)
     {
         try
         {
             var updated = _studentService.UpdateStudent(id, studentDto);
             return updated == null
-                ? Results.NotFound("Student not found")
-                : Results.Ok(updated);
+                ? NotFound("Student not found")
+                : Ok(updated);
         }
         catch (Exception ex)
         {
-            return Results.BadRequest(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
-    [HttpPost]
-    public IResult CreateStudent(StudentDto studentDto)
-    {
-        try
-        {
-            var createdStudent = _studentService.CreateStudent(studentDto);
-            return Results.Created($"/students/{createdStudent.Id}", createdStudent);
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
-    }
-
-    [HttpPut("/{id}/")]
-    public IActionResult MarkStudent(int id, string subject, double grade)
+    [HttpPatch("{id}")]
+    public IActionResult MarkStudent(int id, [FromQuery] string subject, [FromQuery] double grade)
     {
         try
         {
             var student = _studentService.MarkStudent(id, subject, grade);
             return Ok(student);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteStudent(int id)
+    {
+        try
+        {
+            var isDeleted = _studentService.DeleteStudent(id);
+            return isDeleted ? NoContent() : NotFound($"No student was found with id {id}");
         }
         catch (Exception ex)
         {

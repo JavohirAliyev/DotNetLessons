@@ -4,7 +4,9 @@
     "FirstName": "John",
     "LastName": "Doe",
     "Grades": {
-      "Math": 91.5
+      "Math": 91.5,
+      "math": 80.3,
+      "English": 95.6
     }
   },
   {
@@ -12,7 +14,12 @@
     "FirstName": "Sunnat",
     "LastName": "Kayumov",
     "Grades": {
-      "Math": 99
+      "English": 91,
+      "Math": 33,
+      "math": 33,
+      "english": 33,
+      "enGlish": 33,
+      "enGLish": 33
     }
   }
 ]
