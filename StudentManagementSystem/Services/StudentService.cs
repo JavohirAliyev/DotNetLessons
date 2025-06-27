@@ -74,6 +74,24 @@ public class StudentService : IStudentService
         return true;
     }
 
+    public Student MarkStudent(int id, string subject, double grade)
+    {
+        if (string.IsNullOrWhiteSpace(subject) || grade < 0 || grade > 100)
+            throw new Exception("Invalid subject or grade.");
+
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id);
+        if (student == null)
+            throw new KeyNotFoundException($"Student with ID {id} not found.");
+
+        if (student.Grades == null)
+            student.Grades = new Dictionary<string, double>();
+
+        student.Grades[subject] = grade;
+        SaveStudentsList(students);
+        return student;
+    }
+
     public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
