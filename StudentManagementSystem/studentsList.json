@@ -25,6 +25,13 @@
       "Math": 97,
       "English": 95.9
     },
-    "Attendances": []
+    "Attendances": [
+      {
+        "Date": "29-06-2025",
+        "Subjects": {
+          "Engineering": "Absent"
+        }
+      }
+    ]
   }
 ]

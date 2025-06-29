@@ -109,7 +109,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var student = _studentService.RecordAttendance(id, subject, status);
+            var student = _studentService.RecordAttendance(id, subject.Capitalize().Trim(), status.Capitalize().Trim());
             return student == null
                 ? NotFound("Student not found")
                 : Ok(student);
