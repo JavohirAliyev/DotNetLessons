@@ -12,4 +12,5 @@ public interface IStudentService
     Student? MarkStudent(int id, string subject, double grade);
     void SaveStudentsList(List<Student> students);
     List<Student> FilterStudents(string? searchTerm);
+    public Student RecordAttendance(int id, string subject, string status);
 }

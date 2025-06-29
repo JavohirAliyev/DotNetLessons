@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.Services.Interfaces;
+using StudentManagementSystem.Utils;
 
 namespace StudentManagementSystem.Controllers;
 
@@ -80,7 +81,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            var student = _studentService.MarkStudent(id, subject, grade);
+            var student = _studentService.MarkStudent(id, subject.Capitalize().Trim(), grade);
             return Ok(student);
         }
         catch (Exception ex)
@@ -102,4 +103,21 @@ public class StudentsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("{id}/attendance")]
+    public IActionResult RecordAttendance(int id, [FromQuery] string status, [FromQuery] string subject)
+    {
+        try
+        {
+            var student = _studentService.RecordAttendance(id, subject, status);
+            return student == null
+                ? NotFound("Student not found")
+                : Ok(student);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
 }
