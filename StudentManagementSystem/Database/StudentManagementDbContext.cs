@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Models;
 
-class StudentManagementDbContext : DbContext
+public class StudentManagementDbContext : DbContext
 {
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }

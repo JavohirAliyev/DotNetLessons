@@ -5,43 +5,33 @@ using StudentManagementSystem.Utils;
 
 namespace StudentManagementSystem.Services;
 
-public class StudentService : IStudentService
+public class StudentService(StudentManagementDbContext dbContext) : IStudentService
 {
-    private readonly string _filePath = "studentsList.json";
+    private readonly StudentManagementDbContext _dbContext = dbContext;
 
     public Student CreateStudent(StudentDto studentDto)
     {
-        var students = GetAllStudents();
-        int id = students.Count > 0 ? students.Last().Id + 1 : 1;
         Student student = new()
         {
-            Id = id,
             FirstName = studentDto.FirstName,
             LastName = studentDto.LastName
         };
 
-        students.Add(student);
-        SaveStudentsList(students);
+        _dbContext.Students.Add(student);
+        _dbContext.SaveChanges();
         return student;
     }
 
     public List<Student> GetAllStudents()
     {
-        if (File.Exists(_filePath))
+        try
         {
-            string jsonString = File.ReadAllText(_filePath);
-            if (string.IsNullOrWhiteSpace(jsonString))
-                return [];
-            try
-            {
-                return JsonSerializer.Deserialize<List<Student>>(jsonString) ?? [];
-            }
-            catch
-            {
-                return [];
-            }
+            return _dbContext.Students.ToList();
         }
-        return [];
+        catch
+        {
+            return [];
+        }
     }
 
     public List<Student> FilterStudents(string? searchTerm)
@@ -76,7 +66,7 @@ public class StudentService : IStudentService
 
         student.FirstName = studentDto.FirstName;
         student.LastName = studentDto.LastName;
-        SaveStudentsList(students);
+        _dbContext.SaveChanges();
         return student;
     }
 
@@ -88,7 +78,7 @@ public class StudentService : IStudentService
             return false;
 
         students.Remove(student);
-        SaveStudentsList(students);
+        _dbContext.SaveChanges();
         return true;
     }
 
@@ -113,17 +103,7 @@ public class StudentService : IStudentService
             Value = grade
         };
 
-        SaveStudentsList(students);
+        _dbContext.SaveChanges();
         return student;
-    }
-
-    public void SaveStudentsList(List<Student> students)
-    {
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-        };
-        string json = JsonSerializer.Serialize(students, options);
-        File.WriteAllText(_filePath, json);
     }
 }
