@@ -4,8 +4,6 @@ namespace StudentManagementSystem.Services.Interfaces;
 
 public interface IAuthService
 {
-    string GenerateToken(Admin admin);
-
-    Admin Register(UserRegisterDto userDto);
-    Admin Login(UserLoginDto userDto);
+    User Register(UserRegisterDto userRegisterDto);
+    User? Authenticate(string username, string password);
 }
