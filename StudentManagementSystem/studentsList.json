@@ -4,22 +4,34 @@
     "FirstName": "John",
     "LastName": "Doe",
     "Grades": {
-      "Math": 91.5,
-      "math": 80.3,
-      "English": 95.6
-    }
+      "Math": 91.5
+    },
+    "Attendances": [
+      {
+        "Date": "29-06-2025",
+        "Subjects": {
+          "Math": "Present",
+          "English": "Present",
+          "Engineering": "Absent"
+        }
+      }
+    ]
   },
   {
     "Id": 4,
     "FirstName": "Sunnat",
     "LastName": "Kayumov",
     "Grades": {
-      "English": 91,
-      "Math": 33,
-      "math": 33,
-      "english": 33,
-      "enGlish": 33,
-      "enGLish": 33
-    }
+      "Math": 97,
+      "English": 95.9
+    },
+    "Attendances": [
+      {
+        "Date": "29-06-2025",
+        "Subjects": {
+          "Engineering": "Absent"
+        }
+      }
+    ]
   }
 ]

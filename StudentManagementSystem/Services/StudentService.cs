@@ -103,7 +103,7 @@ public class StudentService : IStudentService
         var student = students.FirstOrDefault(s => s.Id == id);
         if (student == null)
         {
-            return null;
+            throw new Exception($"There is no student with ID {id}");
         }
 
         student.Grades[subject] = grade;
@@ -111,11 +111,44 @@ public class StudentService : IStudentService
         return student;
     }
 
+    public Student RecordAttendance(int id, string subject, string status)
+    {
+        var students = GetAllStudents();
+        var student = students.FirstOrDefault(s => s.Id == id);
+
+        if (student == null)
+        {
+            throw new Exception($"There is no student with ID {id}");
+        }
+
+        var date = DateTime.Today.ToString("dd-MM-yyyy");
+
+        var todayRecord = student.Attendances.FirstOrDefault(a => a.Date == date);
+
+        if (todayRecord == null)
+        {
+            todayRecord = new StudentIdAttendance{ Date = date };
+            student.Attendances.Add(todayRecord);
+        }
+
+        if (todayRecord.Subjects.ContainsKey(subject))
+        {
+            todayRecord.Subjects[subject] = status;
+        }
+        else
+        {
+            todayRecord.Subjects.Add(subject, status);
+        }
+
+        SaveStudentsList(students); 
+        return student;
+    }
+
     public void SaveStudentsList(List<Student> students)
     {
         var options = new JsonSerializerOptions
         {
-            WriteIndented = true,
+            WriteIndented = true
         };
         string json = JsonSerializer.Serialize(students, options);
         File.WriteAllText(_filePath, json);
