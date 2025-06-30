@@ -106,7 +106,13 @@ public class StudentService : IStudentService
             return null;
         }
 
-        student.Grades[subject] = grade;
+        var newGrade = new Grade
+        {
+            Subject = subject,
+            Student = student,
+            Value = grade
+        };
+
         SaveStudentsList(students);
         return student;
     }

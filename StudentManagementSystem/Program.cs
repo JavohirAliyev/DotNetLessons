@@ -1,13 +1,12 @@
-﻿using StudentManagementSystem.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.Services;
 using StudentManagementSystem.Services.Interfaces;
-using StudentManagementSystem.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-    });
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<StudentManagementDbContext>();
 
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
