@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "Email": "jane.doe@example.com",
+    "Gender": "Female",
+    "DateOfBirth": "1990-05-15T00:00:00",
+    "Address": "123 Main St, Cityville",
+    "Department": "Mathematics",
+    "YearsOfExperience": 5,
+    "IsActive": true,
+    "LastLogin": "0001-01-01T00:00:00",
+    "LoginAttempts": 0,
+    "IsLocked": false,
+    "SubjectsTaught": [
+      "Algebra",
+      "Calculus"
+    ],
+    "PasswordHash": "JFsi3Ok4BR78KM9DZJKPom4XHbE5dVMRqTcDumX9bQc="
+  },
+  {
+    "Id": 2,
+    "Email": "alice.williams@university.edu",
+    "Gender": "Female",
+    "DateOfBirth": "1990-05-15T00:00:00",
+    "Address": "789 Oak Street, Villagetown",
+    "Department": "English",
+    "YearsOfExperience": 7,
+    "IsActive": true,
+    "LastLogin": "2025-06-30T10:03:03.9899177+05:00",
+    "LoginAttempts": 0,
+    "IsLocked": false,
+    "SubjectsTaught": [
+      "Literature",
+      "Creative Writing"
+    ],
+    "PasswordHash": "ktY2FXI/NSgDoM39\u002B1E6AUhasyTjEI5oWSHv0fRlUaA="
+  }
+]
