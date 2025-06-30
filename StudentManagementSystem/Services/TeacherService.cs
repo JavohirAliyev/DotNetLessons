@@ -27,7 +27,7 @@ public class TeacherService : ITeacherService
             Department = teacherDto.Department,
             YearsOfExperience = teacherDto.YearsOfExperience,
             SubjectsTaught = teacherDto.SubjectsTaught,
-            LastLogin = DateTime.MinValue,
+            LastLogin = DateTime.Now,
             IsLocked = false,
             LoginAttempts = 0,
             PasswordHash = HashPassword(teacherDto.Password)
