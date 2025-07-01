@@ -8,18 +8,21 @@ namespace StudentManagementSystem.Services;
 
 public class TeacherService : ITeacherService
 {
-    private readonly string _filePath = "teachersList.json";
+    private readonly StudentManagementDbContext _dbContext;
+
+    public TeacherService(StudentManagementDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
 
     public Teacher CreateTeacher(TeacherDto teacherDto)
     {
-        var teachers = GetAllTeachers();
-        if (teachers.Any(t => t.Email == teacherDto.Email))
+        if (_dbContext.Teachers.Any(t => t.Email == teacherDto.Email))
             throw new Exception("Email already in use.");
 
-        int id = teachers.Count > 0 ? teachers.Last().Id + 1 : 1;
         var teacher = new Teacher
         {
-            Id = id,
             Email = teacherDto.Email,
             Gender = teacherDto.Gender,
             DateOfBirth = teacherDto.DateOfBirth,
@@ -32,16 +35,15 @@ public class TeacherService : ITeacherService
             LoginAttempts = 0,
             PasswordHash = HashPassword(teacherDto.Password)
         };
+        _dbContext.Teachers.Add(teacher);
+        _dbContext.SaveChanges();
 
-        teachers.Add(teacher);
-        SaveTeachers(teachers);
         return teacher;
     }
 
     public Teacher? Login(LoginDto loginDto)
     {
-        var teachers = GetAllTeachers();
-        var teacher = teachers.FirstOrDefault(t => t.Email == loginDto.Email);
+        var teacher = _dbContext.Teachers.FirstOrDefault(t => t.Email == loginDto.Email);
 
         if (teacher == null || teacher.IsLocked)
             return null;
@@ -58,11 +60,11 @@ public class TeacherService : ITeacherService
             {
                 teacher.IsLocked = true;
             }
-            SaveTeachers(teachers);
+            _dbContext.SaveChanges();
             return null;
         }
 
-        SaveTeachers(teachers);
+        _dbContext.SaveChanges();
         return teacher;
     }
 
@@ -78,16 +80,14 @@ public class TeacherService : ITeacherService
         return HashPassword(password) == hash;
     }
 
-    private List<Teacher> GetAllTeachers()
+    public List<Teacher> GetAllTeachers()
     {
-        if (!File.Exists(_filePath)) return new List<Teacher>();
-        string json = File.ReadAllText(_filePath);
-        return JsonSerializer.Deserialize<List<Teacher>>(json) ?? [];
+        return _dbContext.Teachers.ToList();
     }
 
-    private void SaveTeachers(List<Teacher> teachers)
-    {
-        var json = JsonSerializer.Serialize(teachers, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_filePath, json);
-    }
+    // private void SaveTeachers(List<Teacher> teachers)
+    // {
+    //     var json = JsonSerializer.Serialize(teachers, new JsonSerializerOptions { WriteIndented = true });
+    //     File.WriteAllText(_filePath, json);
+    // }
 }
