@@ -6,11 +6,11 @@ namespace StudentManagementSystem.Controllers;
 
 [ApiController]
 [Route("api/admins")]
-public class AdminsController : ControllerBase
+public class AdminController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public AdminsController(IUserService userService)
+    public AdminController(IUserService userService)
     {
         _userService = userService;
     }

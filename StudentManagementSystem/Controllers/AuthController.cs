@@ -45,7 +45,7 @@ public class AuthController : ControllerBase, IAuthController
         }
         catch (Exception ex)
         {
-            return Unauthorized(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 }

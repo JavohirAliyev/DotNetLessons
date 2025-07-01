@@ -6,4 +6,5 @@ public interface IAuthService
 {
     User Register(UserRegisterDto userRegisterDto);
     User? Authenticate(string username, string password);
+    string Login(UserLoginDto userLoginDto);
 }

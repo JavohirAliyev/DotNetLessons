@@ -11,13 +11,9 @@ public class StudentsController : ControllerBase
     public StudentsController(IStudentService studentService, IUserService userService, IAuthService authService)
     {
         _studentService = studentService;
-        _userService = userService;
-        _authService = authService;
     }
 
     private readonly IStudentService _studentService;
-    private readonly IUserService _userService;
-    private readonly IAuthService _authService;
 
     [HttpGet]
     public IActionResult GetAllStudents([FromQuery] string? searchTerm)
